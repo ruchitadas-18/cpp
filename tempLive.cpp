@@ -12,19 +12,14 @@ public:
     }
 
     LiveData(T&& value)
-        : mValue( std::move(value) ) // std::move just an obsession! works without
+        : mValue( std::move(value) )
     {
     }
 
-    LiveData& operator=(const T& value)
+    template <typename U>
+    LiveData& operator=(U&& value)
     {
-        setValue(value);
-        return *this;
-    }
-
-    LiveData& operator=(T&& value)
-    {
-        setValue( std::move(value) ); // std::move just an obsession! works without
+        setValue( std::forward<U>(value) );
         return *this;
     }
 
@@ -35,18 +30,11 @@ public:
         observer( mValue );
     }
 
-    void setValue(const T& value)
+    template <typename U>
+    void setValue(U&& value)
     {
         if (value != mValue) {
-            mValue = value;
-            notifyObservers();
-        }
-    }
-
-    void setValue(T&& value)
-    {
-        if (value != mValue) {
-            mValue = std::move(value);
+            mValue = std::forward<U>(value);
             notifyObservers();
         }
     }
@@ -65,7 +53,7 @@ private:
 };
 
 #include <iostream>
- 
+
 int main()
 {
     LiveData<int> data{42}; // data : T type is copy-constructible.
