@@ -1,86 +1,89 @@
 #include <iostream>
-#include <functional>
 #include <vector>
-#include <string>
+#include <algorithm>
 
-template <typename T>
-class JetAirways {
-private:
-    void notifyObservers()
-    {
-        for (auto& observer : mObservers) {
-            observer(mValue);
-        }
-    }
-
-    T mValue;
-    std::vector<std::function<void(const T&)>> mObservers;
+class iFlight {
 public:
-    JetAirways() = default;
+    virtual void flightOnTime() = 0;
+    virtual void flightDelayed() = 0;
+};
 
-    JetAirways(const T& value)
-        : mValue(value){}
+class User : public iFlight {
+public:
+    std::string Name;
+    int accountNum;
 
-    JetAirways(T&& value)
-        : mValue( std::move(value) ){}
-
-    JetAirways& operator=(const T& value)
-    {
-        registerDetails(value);
+    User& setName(std::string name) {
+        this->Name = name;
         return *this;
     }
 
-    JetAirways& operator=(T&& value)
-    {
-        registerDetails( std::move(value) ); 
+    User& setAccountNum(int accountNum) {
+        this->accountNum = accountNum;
         return *this;
     }
 
-    template <typename Manger>
-    void observe(Manger&& observer)
-    {
-        mObservers.emplace_back( std::forward< Manger >( observer) );
-        observer( mValue );
+    void flightOnTime() override {
+        std::cout << "Flight on time for user: " << Name << std::endl;
     }
 
-    void registerDetails(const T& value)
-    {
-        if (value != mValue) {
-            mValue = value;
-            notifyObservers();
+    void flightDelayed() override {
+        std::cout << "Flight delayed for user: " << Name << std::endl;
+    }
+};
+
+class jetAirways {
+public:
+    std::vector<iFlight*> users;
+
+    int getUserCount() {
+        return users.size();
+    }
+
+    void passRegister(iFlight* f) {
+        users.push_back(f);
+    }
+
+    void passUnRegister(iFlight* f) {
+        auto it = std::find(users.begin(), users.end(), f);
+        if (it != users.end()) {
+            users.erase(it);
         }
     }
 
-    void registerDetails(T&& value)
-    {
-        if (value != mValue) {
-            mValue = std::move(value);
-            notifyObservers();
-        }
+    void setState(bool state) {
+        notify(state);
     }
 
-    void unregisterDetails(const std::function<void(const T&)>& observer)
-    {
-        mObservers.erase(mObservers.begin(), mObservers.end(), observer);
-    }
-
-    void setState(const bool state ){
+    void notify(bool state) {
         if (state) {
-            std::cout<<"Flight is on Time: "<<mValue<<std::endl;
+            for (auto& cUser : users) {
+                cUser->flightOnTime();
+            }
         } else {
-            std::cout<<"Flight is not on Time: "<<mValue<<std::endl;
+            for (auto& cUser : users) {
+                cUser->flightDelayed();
+            }
         }
     }
 };
 
-int main()
-{
-    JetAirways<std::string> data{" "}; 
-    JetAirways<std::string> data1{""};
-    data1.registerDetails("Koustubha");
-    data.registerDetails("Mandira");
-    data.setState(false);
-    data1.setState(true);
+int main(int args, const char* argv[]) {
+    std::cout << "JetAirways" << std::endl;
+    jetAirways jet;
+
+    User user1, user2;
+    user1
+        .setAccountNum(12345677)
+        .setName("Suresh");
+    user2
+        .setAccountNum(12677)
+        .setName("Ramesh");
+
+    jet.passRegister(&user1);
+    jet.passRegister(&user2);
+
+    jet.setState(true);
 
     return 0;
 }
