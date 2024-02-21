@@ -1,94 +1,59 @@
-#include<bits/stdc++.h>
+#include <iostream>
+#include <string>
+
 using namespace std;
 
-class Electricity{
-    //private data members
-    int sanctionLoad,electricityslab;
-    long presentReading, previousReading, Consumption;
+class Bill{
     
-    public: Electricity(){} //default constructor;
+    std::string product;
+    std::string brand;
+    double cost;
+    double tax;
 
-    //setter method;
-    void setSanctionLoad(int sanctionLoad){
-        this->sanctionLoad = sanctionLoad;
-    }
-    void setElectricityslab(int electricityslab){
-        this->electricityslab= electricityslab;
-    }
-    void setPreviousReading(long previousReading){
-        this->previousReading = previousReading;
-    }
-    void setPresentReading(long presentReading){
-        this->presentReading = presentReading;
-    }
-    void setConsumption(int Consumption){
-        this->Consumption = Consumption;
+    public:
+
+    Bill& productN(const std::string& productName){
+        this->product = productName;
+        return *this;
     }
 
-    //getter method
-    int getSanctionLoad(){
-        return sanctionLoad;
-    }
-    int getElectricityslab(){
-        return electricityslab;
-    }
-    long getPreviousReading(){
-        return previousReading;
-    }
-    long getPresentReading(){
-        return presentReading;
-    }
-    long getConsumption(){
-        return Consumption;
-    }
-    
-    //functions to calculate Electricity Bill
-    int calculateElectricityBill(int sanctionLoad, int electricityslab, long presentReading, long previousReading, long Consumption){
-        //condition on reading
-        if(presentReading>previousReading){
-            return 0;
-        }else{
-            //calculate the electric bill
-            return (sanctionLoad*electricityslab)+(Consumption*electricityslab/100);
-        }
+    Bill& brandN(const std::string& brandName){
+        this -> brand = brandName;
+        return *this;
     }
 
-    // function to take input from the user
-    void accept(){
-        cout<<"SanctionLoad: "<<endl;
-        cin>>sanctionLoad;
-
-        cout<<"Electricityslab: "<<endl;
-        cin>>electricityslab;
-
-        cout<<"PresentReading: "<<endl;
-        cin>>presentReading;
-
-        cout<<"Previous Reading: "<<endl;
-        cin>>previousReading;
-
-        cout<<"Consumption: "<<endl;
-        cin>>Consumption;
+    Bill& costT(double costAmt){
+        this -> cost = costAmt;
+        return *this;
     }
 
-    //function to display the details
+    Bill& taxT(double taxAmt){
+        this -> tax = taxAmt;
+        return *this;
+    }
+
     void display(){
-        cout<<"SanctionLoad: "<<sanctionLoad<<endl;
-        cout<<"Electricityslab: "<<electricityslab<<endl;
-        cout<<"PresentReading: "<<presentReading<<endl;
-        cout<<"Previous Reading: "<<previousReading<<endl;
-        cout<<"Consumption: "<<Consumption<<endl;
-        // Calling the Electric Bill
-        cout<<"Electric Bill Amount: "<<calculateElectricityBill(sanctionLoad, electricityslab,presentReading, previousReading, Consumption)<<endl;
+        cout<<"Product: "<<product<<endl;
+        cout<<"Brand: "<<brand<<endl;
+        cout<<"Cost: "<<cost<<endl;
+        cout<<"Tax: "<<tax<<endl;
     }
-};
-int main(){
-    //creating object of the class
-    Electricity e;
-    //calling the functions
-    e.accept();
-    e.display();
 
-    //terminating the program
+};
+
+//Builder code to call the function
+void simpleCode(){
+    Bill b;
+    b.productN("Dress")
+     .brandN("Allen Solly")
+     .costT(90)
+     .taxT(30);
+    b.display();
+}
+
+
+int main(int argc, const char* argv[]){
+    //call the 
+    simpleCode();
     return 0;
 }
